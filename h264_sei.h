@@ -1,20 +1,20 @@
-/* 
+﻿/*
  * h264bitstream - a library for reading and writing H.264 video
  * Copyright (C) 2005-2007 Auroras Entertainment, LLC
  * Copyright (C) 2008-2011 Avail-TVN
- * 
+ *
  * Written by Alex Izvorski <aizvorski@gmail.com> and Alex Giladi <alex.giladi@gmail.com>
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -35,7 +35,7 @@ extern "C" {
 #endif
 
 #define MAX_J 128
-    
+
 typedef struct
 {
     unsigned short layer_id; //TBD: is layer_id possible to larger than 65535
@@ -132,12 +132,12 @@ typedef struct
         unsigned char priority_id_setting_uri[MAX_LENGTH];
     } pr[MAX_J];
 } sei_scalability_info_t;
-    
+
 typedef struct
 {
     int payloadType;
     int payloadSize;
-    
+
     union
     {
         sei_scalability_info_t* sei_svc;

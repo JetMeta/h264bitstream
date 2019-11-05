@@ -1,4 +1,4 @@
-/*
+﻿/*
  * h264bitstream - a library for reading and writing H.264 video
  * Copyright (C) 2005-2007 Auroras Entertainment, LLC
  * Copyright (C) 2008-2011 Avail-TVN
@@ -44,12 +44,13 @@ sei_t* sei_new()
 
 void sei_free(sei_t* s)
 {
-    switch( s->payloadType ) {
-        case SEI_TYPE_SCALABILITY_INFO:
-            if ( s->sei_svc != NULL ) free(s->sei_svc);
-            break;
-        default:
-            if ( s->data != NULL ) free(s->data);
+    switch( s->payloadType )
+    {
+    case SEI_TYPE_SCALABILITY_INFO:
+        if ( s->sei_svc != NULL ) free(s->sei_svc);
+        break;
+    default:
+        if ( s->data != NULL ) free(s->data);
     }
     free(s);
 }
@@ -65,7 +66,7 @@ void read_sei_end_bits(h264_stream_t* h, bs_t* b )
             if ( bs_read_u1( b ) ) fprintf(stderr, "WARNING: bit_equal_to_zero is 1!!!!\n");
         }
     }
-    
+
     read_rbsp_trailing_bits(b);
 }
 
@@ -77,13 +78,14 @@ void read_sei_end_bits(h264_stream_t* h, bs_t* b )
 void structure(sei_scalability_info)( h264_stream_t* h, bs_t* b )
 {
     sei_scalability_info_t* sei_svc = h->sei->sei_svc;
-    
+
     value( sei_svc->temporal_id_nesting_flag, u1 );
     value( sei_svc->priority_layer_info_present_flag, u1 );
     value( sei_svc->priority_id_setting_flag, u1 );
     value( sei_svc->num_layers_minus1, ue );
-    
-    for( int i = 0; i <= sei_svc->num_layers_minus1; i++ ) {
+
+    for( int i = 0; i <= sei_svc->num_layers_minus1; i++ )
+    {
         value( sei_svc->layers[i].layer_id, ue );
         value( sei_svc->layers[i].priority_id, u(6) );
         value( sei_svc->layers[i].discardable_flag, u1 );
@@ -102,7 +104,7 @@ void structure(sei_scalability_info)( h264_stream_t* h, bs_t* b )
         value( sei_svc->layers[i].bitstream_restriction_info_present_flag, u1 );
         value( sei_svc->layers[i].exact_inter_layer_pred_flag, u1 );
         if( sei_svc->layers[i].sub_pic_layer_flag ||
-            sei_svc->layers[i].iroi_division_info_present_flag )
+                sei_svc->layers[i].iroi_division_info_present_flag )
         {
             value( sei_svc->layers[i].exact_sample_value_match_flag, u1 );
         }
@@ -125,7 +127,7 @@ void structure(sei_scalability_info)( h264_stream_t* h, bs_t* b )
             value( sei_svc->layers[i].avg_frm_rate, u(16) );
         }
         if( sei_svc->layers[i].frm_size_info_present_flag ||
-            sei_svc->layers[i].iroi_division_info_present_flag )
+                sei_svc->layers[i].iroi_division_info_present_flag )
         {
             value( sei_svc->layers[i].frm_width_in_mbs_minus1, ue );
             value( sei_svc->layers[i].frm_height_in_mbs_minus1, ue );
@@ -157,7 +159,7 @@ void structure(sei_scalability_info)( h264_stream_t* h, bs_t* b )
             else
             {
                 value( sei_svc->layers[i].num_rois_minus1, ue );
-                
+
                 for( int j = 0; j <= sei_svc->layers[i].num_rois_minus1; j++ )
                 {
                     value( sei_svc->layers[i].roi[j].first_mb_in_roi, ue );
@@ -229,8 +231,9 @@ void structure(sei_scalability_info)( h264_stream_t* h, bs_t* b )
     if( sei_svc->priority_layer_info_present_flag )
     {
         value( sei_svc->pr_num_dIds_minus1, ue );
-        
-        for( int i = 0; i <= sei_svc->pr_num_dIds_minus1; i++ ) {
+
+        for( int i = 0; i <= sei_svc->pr_num_dIds_minus1; i++ )
+        {
             value( sei_svc->pr[i].pr_dependency_id, u(3) );
             value( sei_svc->pr[i].pr_num_minus1, ue );
             for( int j = 0; j <= sei_svc->pr[i].pr_num_minus1; j++ )
@@ -241,7 +244,7 @@ void structure(sei_scalability_info)( h264_stream_t* h, bs_t* b )
                 value( sei_svc->pr[i].pr_info[j].pr_max_bitrate, u(16) );
             }
         }
-        
+
     }
 
 }
@@ -250,27 +253,27 @@ void structure(sei_scalability_info)( h264_stream_t* h, bs_t* b )
 void structure(sei_payload)( h264_stream_t* h, bs_t* b )
 {
     sei_t* s = h->sei;
-    
+
     int i;
     switch( s->payloadType )
     {
-        case SEI_TYPE_SCALABILITY_INFO:
-            if( is_reading )
-            {
-                s->sei_svc = (uint8_t*)calloc( 1, sizeof(sei_scalability_info_t) );
-            }
-            structure(sei_scalability_info)( h, b );
-            break;
-        default:
-            if( is_reading )
-            {
-                s->data = (uint8_t*)calloc(1, s->payloadSize);
-            }
-            
-            for ( i = 0; i < s->payloadSize; i++ )
-                value( s->data[i], u8 );
+    case SEI_TYPE_SCALABILITY_INFO:
+        if( is_reading )
+        {
+            s->sei_svc = (uint8_t*)calloc( 1, sizeof(sei_scalability_info_t) );
+        }
+        structure(sei_scalability_info)( h, b );
+        break;
+    default:
+        if( is_reading )
+        {
+            s->data = (uint8_t*)calloc(1, s->payloadSize);
+        }
+
+        for ( i = 0; i < s->payloadSize; i++ )
+            value( s->data[i], u8 );
     }
-    
+
     //if( is_reading )
     //    read_sei_end_bits(h, b);
 }

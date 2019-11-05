@@ -1,21 +1,21 @@
-/* 
+﻿/*
  * h264bitstream - a library for reading and writing H.264 video
  * Copyright (C) 2005-2007 Auroras Entertainment, LLC
  * Copyright (C) 2008-2011 Avail-TVN
  * Copyright (C) 2012 Alex Izvorski
- * 
+ *
  * Written by Alex Izvorski <aizvorski@gmail.com> and Alex Giladi <alex.giladi@gmail.com>
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -83,7 +83,7 @@ void structure(slice_data)( h264_stream_t* h, bs_t* b )
         }
         else
         {
-        if( h->sh->slice_type != SH_SLICE_TYPE_I && h->sh->slice_type != SH_SLICE_TYPE_SI )
+            if( h->sh->slice_type != SH_SLICE_TYPE_I && h->sh->slice_type != SH_SLICE_TYPE_SI )
             {
                 prevMbSkipped = mb_skip_flag;
             }
@@ -99,7 +99,8 @@ void structure(slice_data)( h264_stream_t* h, bs_t* b )
             }
         }
         CurrMbAddr = NextMbAddress( CurrMbAddr );
-    } while( moreDataFlag );
+    }
+    while( moreDataFlag );
 }
 
 
@@ -127,8 +128,8 @@ void structure(macroblock_layer)( h264_stream_t* h, bs_t* b )
     {
         int noSubMbPartSizeLessThan8x8Flag = 1;
         if( mb->mb_type != I_NxN &&
-            MbPartPredMode( mb->mb_type, 0 ) != Intra_16x16 &&
-            NumMbPart( mb->mb_type ) == 4 )
+                MbPartPredMode( mb->mb_type, 0 ) != Intra_16x16 &&
+                NumMbPart( mb->mb_type ) == 4 )
         {
             structure(sub_mb_pred)( h, b, mb->mb_type );
             for( int mbPartIdx = 0; mbPartIdx < 4; mbPartIdx++ )
@@ -158,15 +159,15 @@ void structure(macroblock_layer)( h264_stream_t* h, bs_t* b )
         {
             value( mb->coded_block_pattern, me, ae );
             if( CodedBlockPatternLuma > 0 &&
-                h->pps->transform_8x8_mode_flag && mb->mb_type != I_NxN &&
-                noSubMbPartSizeLessThan8x8Flag &&
-                ( mb->mb_type != B_Direct_16x16 || h->sps->direct_8x8_inference_flag ) )
+                    h->pps->transform_8x8_mode_flag && mb->mb_type != I_NxN &&
+                    noSubMbPartSizeLessThan8x8Flag &&
+                    ( mb->mb_type != B_Direct_16x16 || h->sps->direct_8x8_inference_flag ) )
             {
                 value( mb->transform_size_8x8_flag, u(1), ae );
             }
         }
         if( CodedBlockPatternLuma > 0 || CodedBlockPatternChroma > 0 ||
-            MbPartPredMode( mb->mb_type, 0 ) == Intra_16x16 )
+                MbPartPredMode( mb->mb_type, 0 ) == Intra_16x16 )
         {
             value( mb->mb_qp_delta, se, ae );
             structure(residual)( h, b );
@@ -180,8 +181,8 @@ void structure(mb_pred)( h264_stream_t* h, bs_t* b, int mb_type )
     macroblock_t* mb;
 
     if( MbPartPredMode( mb->mb_type, 0 ) == Intra_4x4 ||
-        MbPartPredMode( mb->mb_type, 0 ) == Intra_8x8 ||
-        MbPartPredMode( mb->mb_type, 0 ) == Intra_16x16 )
+            MbPartPredMode( mb->mb_type, 0 ) == Intra_8x8 ||
+            MbPartPredMode( mb->mb_type, 0 ) == Intra_16x16 )
     {
         if( MbPartPredMode( mb->mb_type, 0 ) == Intra_4x4 )
         {
@@ -215,8 +216,8 @@ void structure(mb_pred)( h264_stream_t* h, bs_t* b, int mb_type )
         for( int mbPartIdx = 0; mbPartIdx < NumMbPart( mb->mb_type ); mbPartIdx++)
         {
             if( ( h->pps->num_ref_idx_l0_active_minus1 > 0 ||
-                  mb->mb_field_decoding_flag ) &&
-                MbPartPredMode( mb->mb_type, mbPartIdx ) != Pred_L1 )
+                    mb->mb_field_decoding_flag ) &&
+                    MbPartPredMode( mb->mb_type, mbPartIdx ) != Pred_L1 )
             {
                 value( mb->ref_idx_l0[ mbPartIdx ], te, ae );
             }
@@ -224,8 +225,8 @@ void structure(mb_pred)( h264_stream_t* h, bs_t* b, int mb_type )
         for( int mbPartIdx = 0; mbPartIdx < NumMbPart( mb->mb_type ); mbPartIdx++)
         {
             if( ( h->pps->num_ref_idx_l1_active_minus1 > 0 ||
-                  mb->mb_field_decoding_flag ) &&
-                MbPartPredMode( mb->mb_type, mbPartIdx ) != Pred_L0 )
+                    mb->mb_field_decoding_flag ) &&
+                    MbPartPredMode( mb->mb_type, mbPartIdx ) != Pred_L0 )
             {
                 value( mb->ref_idx_l1[ mbPartIdx ], te, ae );
             }
@@ -265,9 +266,9 @@ void structure(sub_mb_pred)( h264_stream_t* h, bs_t* b, int mb_type )
     for( int mbPartIdx = 0; mbPartIdx < 4; mbPartIdx++ )
     {
         if( ( h->pps->num_ref_idx_l0_active_minus1 > 0 || mb->mb_field_decoding_flag ) &&
-            mb->mb_type != P_8x8ref0 &&
-            mb->sub_mb_type[ mbPartIdx ] != B_Direct_8x8 &&
-            SubMbPredMode( mb->sub_mb_type[ mbPartIdx ] ) != Pred_L1 )
+                mb->mb_type != P_8x8ref0 &&
+                mb->sub_mb_type[ mbPartIdx ] != B_Direct_8x8 &&
+                SubMbPredMode( mb->sub_mb_type[ mbPartIdx ] ) != Pred_L1 )
         {
             value( mb->ref_idx_l0[ mbPartIdx ], te, ae );
         }
@@ -275,8 +276,8 @@ void structure(sub_mb_pred)( h264_stream_t* h, bs_t* b, int mb_type )
     for( int mbPartIdx = 0; mbPartIdx < 4; mbPartIdx++ )
     {
         if( (h->pps->num_ref_idx_l1_active_minus1 > 0 || mb->mb_field_decoding_flag ) &&
-            mb->sub_mb_type[ mbPartIdx ] != B_Direct_8x8 &&
-            SubMbPredMode( mb->sub_mb_type[ mbPartIdx ] ) != Pred_L0 )
+                mb->sub_mb_type[ mbPartIdx ] != B_Direct_8x8 &&
+                SubMbPredMode( mb->sub_mb_type[ mbPartIdx ] ) != Pred_L0 )
         {
             value( mb->ref_idx_l1[ mbPartIdx ], te, ae );
         }
@@ -284,11 +285,11 @@ void structure(sub_mb_pred)( h264_stream_t* h, bs_t* b, int mb_type )
     for( int mbPartIdx = 0; mbPartIdx < 4; mbPartIdx++ )
     {
         if( mb->sub_mb_type[ mbPartIdx ] != B_Direct_8x8 &&
-            SubMbPredMode( mb->sub_mb_type[ mbPartIdx ] ) != Pred_L1 )
+                SubMbPredMode( mb->sub_mb_type[ mbPartIdx ] ) != Pred_L1 )
         {
             for( int subMbPartIdx = 0;
-                 subMbPartIdx < NumSubMbPart( mb->sub_mb_type[ mbPartIdx ] );
-                 subMbPartIdx++)
+                    subMbPartIdx < NumSubMbPart( mb->sub_mb_type[ mbPartIdx ] );
+                    subMbPartIdx++)
             {
                 for( int compIdx = 0; compIdx < 2; compIdx++ )
                 {
@@ -300,11 +301,11 @@ void structure(sub_mb_pred)( h264_stream_t* h, bs_t* b, int mb_type )
     for( int mbPartIdx = 0; mbPartIdx < 4; mbPartIdx++ )
     {
         if( mb->sub_mb_type[ mbPartIdx ] != B_Direct_8x8 &&
-            SubMbPredMode( mb->sub_mb_type[ mbPartIdx ] ) != Pred_L0 )
+                SubMbPredMode( mb->sub_mb_type[ mbPartIdx ] ) != Pred_L0 )
         {
             for( int subMbPartIdx = 0;
-                 subMbPartIdx < NumSubMbPart( mb->sub_mb_type[ mbPartIdx ] );
-                 subMbPartIdx++)
+                    subMbPartIdx < NumSubMbPart( mb->sub_mb_type[ mbPartIdx ] );
+                    subMbPartIdx++)
             {
                 for( int compIdx = 0; compIdx < 2; compIdx++ )
                 {
@@ -320,16 +321,16 @@ void structure(residual)( h264_stream_t* h, bs_t* b )
 {
     macroblock_t* mb;
 
-/*
-    if( !h->pps->entropy_coding_mode_flag )
-    {
-        residual_block = residual_block_cavlc;
-    }
-    else
-    {
-        residual_block = residual_block_cabac;
-    }
-*/
+    /*
+        if( !h->pps->entropy_coding_mode_flag )
+        {
+            residual_block = residual_block_cavlc;
+        }
+        else
+        {
+            residual_block = residual_block_cabac;
+        }
+    */
     // FIXME
 #define read_residual_block read_residual_block_cavlc
 
@@ -482,7 +483,7 @@ void structure(residual_block_cavlc)( bs_t* b, int* coeffLevel, int maxNumCoeff 
                     levelCode += ( 1 << ( level_prefix - 3 ) ) - 4096;
                 }
                 if( i == TrailingOnes( coeff_token ) &&
-                    TrailingOnes( coeff_token ) < 3 )
+                        TrailingOnes( coeff_token ) < 3 )
                 {
                     levelCode += 2;
                 }
@@ -499,19 +500,20 @@ void structure(residual_block_cavlc)( bs_t* b, int* coeffLevel, int maxNumCoeff 
                     suffixLength = 1;
                 }
                 if( Abs( level[ i ] ) > ( 3 << ( suffixLength - 1 ) ) &&
-                    suffixLength < 6 )
+                        suffixLength < 6 )
                 {
                     suffixLength++;
                 }
             }
         }
-    int zerosLeft;
+        int zerosLeft;
         if( TotalCoeff( coeff_token ) < maxNumCoeff )
         {
             int total_zeros;
             value( total_zeros, ce );
             zerosLeft = total_zeros;
-        } else
+        }
+        else
         {
             zerosLeft = 0;
         }
@@ -522,7 +524,8 @@ void structure(residual_block_cavlc)( bs_t* b, int* coeffLevel, int maxNumCoeff 
                 int run_before;
                 value( run_before, ce );
                 run[ i ] = run_before;
-            } else
+            }
+            else
             {
                 run[ i ] = 0;
             }
@@ -572,7 +575,8 @@ void structure(residual_block_cabac)( bs_t* b, int* coeffLevel, int maxNumCoeff 
                 }
             }
             i++;
-        } while( i < numCoeff - 1 );
+        }
+        while( i < numCoeff - 1 );
 
         value( coeff_abs_level_minus1[ numCoeff - 1 ], ae );
         value( coeff_sign_flag[ numCoeff - 1 ], ae );
@@ -586,7 +590,7 @@ void structure(residual_block_cabac)( bs_t* b, int* coeffLevel, int maxNumCoeff 
                 value( coeff_abs_level_minus1[ i ], ae );
                 value( coeff_sign_flag[ i ], ae );
                 coeffLevel[ i ] = ( coeff_abs_level_minus1[ i ] + 1 ) *
-                    ( 1 - 2 * coeff_sign_flag[ i ] );
+                                  ( 1 - 2 * coeff_sign_flag[ i ] );
             }
             else
             {

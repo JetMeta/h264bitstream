@@ -1,20 +1,20 @@
-/* 
+﻿/*
  * h264bitstream - a library for reading and writing H.264 video
  * Copyright (C) 2005-2007 Auroras Entertainment, LLC
  * Copyright (C) 2008-2011 Avail-TVN
- * 
+ *
  * Written by Alex Izvorski <aizvorski@gmail.com> and Alex Giladi <alex.giladi@gmail.com>
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -74,11 +74,11 @@ typedef struct
     int bit_depth_chroma_minus8;
     int qpprime_y_zero_transform_bypass_flag;
     int seq_scaling_matrix_present_flag;
-      int seq_scaling_list_present_flag[12];
-      int ScalingList4x4[6][16];
-      int UseDefaultScalingMatrix4x4Flag[6];
-      int ScalingList8x8[6][64];
-      int UseDefaultScalingMatrix8x8Flag[6];
+    int seq_scaling_list_present_flag[12];
+    int ScalingList4x4[6][16];
+    int UseDefaultScalingMatrix4x4Flag[6];
+    int ScalingList8x8[6][64];
+    int UseDefaultScalingMatrix8x8Flag[6];
     int log2_max_frame_num_minus4;
     int pic_order_cnt_type;
     int log2_max_pic_order_cnt_lsb_minus4;
@@ -100,7 +100,7 @@ typedef struct
     int frame_crop_top_offset;
     int frame_crop_bottom_offset;
     int vui_parameters_present_flag;
-    
+
     struct
     {
         int aspect_ratio_info_present_flag;
@@ -136,7 +136,7 @@ typedef struct
         int num_reorder_frames;
         int max_dec_frame_buffering;
     } vui;
-    
+
     hrd_t hrd_nal;
     hrd_t hrd_vcl;
 
@@ -165,8 +165,9 @@ typedef struct
     bool adaptive_tcoeff_level_prediction_flag;
     bool slice_header_restriction_flag;
     bool svc_vui_parameters_present_flag;
-    
-    struct {
+
+    struct
+    {
         unsigned short vui_ext_num_entries_minus1;
         unsigned char vui_ext_dependency_id[MAX_J];
         unsigned char vui_ext_quality_id[MAX_J];
@@ -194,7 +195,8 @@ typedef struct
 typedef struct
 {
     sps_t *sps;
-    union {
+    union
+    {
         sps_svc_ext_t* sps_svc_ext;
     };
     bool additional_extension2_flag;
@@ -208,7 +210,7 @@ typedef struct
    @see write_pic_parameter_set_rbsp
    @see debug_pps
 */
-typedef struct 
+typedef struct
 {
     int pic_parameter_set_id;
     int seq_parameter_set_id;
@@ -239,11 +241,11 @@ typedef struct
 
     int transform_8x8_mode_flag;
     int pic_scaling_matrix_present_flag;
-       int pic_scaling_list_present_flag[8];
-       int ScalingList4x4[6][16];
-       int UseDefaultScalingMatrix4x4Flag[6];
-       int ScalingList8x8[2][64];
-       int UseDefaultScalingMatrix8x8Flag[2];
+    int pic_scaling_list_present_flag[8];
+    int ScalingList4x4[6][16];
+    int UseDefaultScalingMatrix4x4Flag[6];
+    int ScalingList8x8[2][64];
+    int UseDefaultScalingMatrix8x8Flag[2];
     int second_chroma_qp_index_offset;
 } pps_t;
 
@@ -369,7 +371,7 @@ typedef struct
     bool tcoeff_level_prediction_flag;
     unsigned char scan_idx_start;
     unsigned char scan_idx_end;
-    
+
     //dec_ref_base_pic_marking
     bool adaptive_ref_base_pic_marking_mode_flag;
     int memory_management_base_control_operation;
@@ -428,7 +430,7 @@ typedef struct
     int difference_of_base_pic_nums_minus1;
     int long_term_base_pic_num;
 } prefix_nal_svc_t;
-    
+
 /**
    Network Abstraction Layer (NAL) unit
    @see 7.3.1 NAL unit syntax
@@ -500,9 +502,9 @@ typedef struct
 
 /**
    H264 stream
-   Contains data structures for all NAL types that can be handled by this library.  
-   When reading, data is read into those, and when writing it is written from those.  
-   The reason why they are all contained in one place is that some of them depend on others, we need to 
+   Contains data structures for all NAL types that can be handled by this library.
+   When reading, data is read into those, and when writing it is written from those.
+   The reason why they are all contained in one place is that some of them depend on others, we need to
    have all of them available to read or write correctly.
  */
 typedef struct
@@ -512,13 +514,13 @@ typedef struct
     sps_subset_t* sps_subset;  // refer to subset
     pps_t* pps;
     aud_t* aud;
-    sei_t* sei; //This is a TEMP pointer at whats in h->seis...    
+    sei_t* sei; //This is a TEMP pointer at whats in h->seis...
     int num_seis;
     slice_header_t* sh;
     slice_header_svc_ext_t* sh_svc_ext;
-    
+
     slice_data_rbsp_t* slice_data;
-    
+
     sps_t* sps_table[32];
     sps_subset_t* sps_subset_table[64];  //refer to base SPS
     pps_t* pps_table[256];
@@ -622,13 +624,13 @@ void write_sei_payload( h264_stream_t* h, bs_t* b);
 #define NAL_UNIT_TYPE_PREFIX_NAL                    14    // Prefix NAL unit
 #define NAL_UNIT_TYPE_SUBSET_SPS                    15    // Subset Sequence parameter set
 #define NAL_UNIT_TYPE_DPS                           16    // Depth Parameter Set
-                                             // 17..18    // Reserved
+// 17..18    // Reserved
 #define NAL_UNIT_TYPE_CODED_SLICE_AUX               19    // Coded slice of an auxiliary coded picture without partitioning
 #define NAL_UNIT_TYPE_CODED_SLICE_SVC_EXTENSION     20    // Coded slice of SVC extension
-                                             // 20..23    // Reserved
-                                             // 24..31    // Unspecified
+// 20..23    // Reserved
+// 24..31    // Unspecified
 
- 
+
 
 //7.4.3 Table 7-6. Name association to slice_type
 #define SH_SLICE_TYPE_P        0        // P (P slice)
@@ -664,7 +666,7 @@ void write_sei_payload( h264_stream_t* h, bs_t* b);
 #define SAR_15_11     11             // 15:11
 #define SAR_64_33     12             // 64:33
 #define SAR_160_99    13             // 160:99
-                                     // 14..254           Reserved
+// 14..254           Reserved
 #define SAR_Extended      255        // Extended_SAR
 
 //7.4.3.1 Table 7-7 reordering_of_pic_nums_idc operations for reordering of reference picture lists
